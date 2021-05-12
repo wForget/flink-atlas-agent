@@ -2,11 +2,14 @@ package cn.wangz.flink.atlas.agent.entities;
 
 import org.apache.atlas.model.instance.AtlasEntity;
 import org.apache.flink.api.common.functions.Function;
+import org.apache.flink.streaming.api.functions.sink.filesystem.StreamingFileSink;
 import org.apache.flink.streaming.api.graph.StreamNode;
 import org.apache.flink.streaming.api.operators.AbstractUdfStreamOperator;
 import org.apache.flink.streaming.api.operators.StreamOperator;
+import org.apache.flink.table.filesystem.stream.AbstractStreamingWriter;
 
 import cn.wangz.flink.atlas.agent.entities.function.FlinkKafkaConsumerEntity;
+import cn.wangz.flink.atlas.agent.entities.function.GenericJdbcSinkFunctionEntity;
 
 public class StreamNodeEntity extends NodeEntity<StreamNode> {
 
@@ -24,10 +27,12 @@ public class StreamNodeEntity extends NodeEntity<StreamNode> {
                 case FLINK_KAFKA_CONSUMER_CLASS:
                     return new FlinkKafkaConsumerEntity(userFunction).toEntity();
                 case GENERIC_JDBC_SINK_FUNCTION_CLASS:
-                    break;
+                    return new GenericJdbcSinkFunctionEntity(userFunction).toEntity();
                 default:
                     return null;
             }
+        } else if (operator instanceof AbstractStreamingWriter) {
+
         }
         return null;
     }
